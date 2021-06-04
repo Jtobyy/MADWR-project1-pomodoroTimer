@@ -61,5 +61,6 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-Ibroassbly.*
+Ibroassbly.txt
 Ibroassbly
+staffREADME.md

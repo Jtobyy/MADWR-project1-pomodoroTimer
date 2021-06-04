@@ -1,13 +1,10 @@
-# Project 1 - Pomodoro Timer
-For this project, you'll be implementing a Pomodoro timer. This timer will help
-people trying to use the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
+# Pomodoro Timer
+This timer will help people trying to use the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 It will vibrate to tell you when to take breaks or resume working, based on some
-determined values. Check out the [staff solution](#staff-solution) for a working
-version.
+determined values.
 
 
 ## Requirements
-- You may not import libraries other than the below:
   - `expo`
   - `react`
   - `react-native`
@@ -19,9 +16,6 @@ version.
 - Timer should be able to start, stop, and reset
 
 The aesthetics of the app is up to you!
-
-### Challenge (Not Required)
-- Allow the user to input any arbitrary time for the timers (e.g. 5 mins of work time and 5 mins of break)
 
 ## Getting Started
 First, head to [this link](https://docs.expo.io/versions/latest/introduction/installation.html)
@@ -71,7 +65,3 @@ vibrate()
 ```
 
 Good luck!
-
-## Staff Solution
-If you want to play with the staff implementation, you can view it using
-Snack at [@jhhayashi/project1-solution](https://snack.expo.io/@jhhayashi/project1-solution).
