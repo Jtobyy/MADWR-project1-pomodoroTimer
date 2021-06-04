@@ -1,105 +1,137 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, } from 'react-native';
 
-const WorkTiming = (props) => {
-  return (
-    <View style={styles.timing}>
-    <Text style={styles.titles}>Work Time: </Text>
-    <TextInput style={[styles.inputs, styles.input1]} onChangeText={setWorkTimeMin} maxLength={2} keyboardType="numeric" >{props.workTimeMin}</TextInput>
-    <TextInput style={[styles.inputs, styles.input2]} onChangeText={setWorkTimeSec} maxLength={2} keyboardType="numeric" >{props.workTimeSec}</TextInput>   
-  </View>
-  )
-}
-
-
-const BreakTiming = (props) => {
-  return (
-    <View style={styles.timing}>
-    <Text style={styles.titles}>Break Time: </Text>
-    <TextInput style={[styles.inputs, styles.input1]} onChangeText={setBreakTimeMin}  maxLength={2} keyboardType="numeric" >{props.breakTimeMin}</TextInput>
-    <TextInput style={[styles.inputs, styles.input2]} onChangeText={setBreakTimeSec}  maxLength={2} keyboardType="nummeric">{props.breakTimeSec}</TextInput> 
-  </View>
-  )
-}
-
-class WorkTimer extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      min: this.props.min,
-      sec: this.props.sec,
-    }
-  }
-  
-  return (
-    pass
-    )
-  }
-
-class BreakTimer extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      min: this.props.min,
-      sec: this.props.sec,
-    }
-  }
-
-    return (
-      pass
-    )
-  }
   
 export default class App extends React.Component {
   constructor() {
     super()
     this.state = {
+      workTimeMinstart: 25,
+      workTimeSecstart: 0,
+      breakTimeMinstart: 5,
+      breakTimeSecstart: 0,
       workTimeMin: 25,
       workTimeSec: 0,
       breakTimeMin: 5,
       breakTimeSec: 0,
       SP: 'Start',
+      status: 'Work'
     }
   }
   
-  componentDidMount() {
-    this.timer = setInterval(this.incrementCount, 1000)
+  decrementWorkCount = () => { 
+    if(this.state.workTimeSec == 0 && this.state.workTiimeMin != 0) {
+      return (
+        this.setState(function(prevState) {
+          return {
+            workTimeMin: prevState.workTimeMin - 1,
+            workTimeSec: 60,
+          }
+        })
+      )
+    }
+    else if(this.state.workTimeSec == 0 && this.state.workTimeMin == 0) {
+      return (
+        this.decrementBreakCount
+      )
+    }
+    else {
+      return (
+          this.setState(function(prevState) {
+            return {
+              workTimeSec: prevState.workTimeSec - 1
+            }
+          })
+          )
+    } 
+  }
+
+  decrementBreakCount = () => {
+    if(this.state.breakTimeSec == 0 && this.state.breakTiimeMin != 0) {
+      return (
+        this.setState(function(prevState) {
+          return {
+            breakTimeMin: prevState.breakTimeMin - 1,
+            breakTimeSec: 60,
+          }
+        })
+      )
+    }
+    else if(this.state.breakTimeSec == 0 && this.state.breakTimeMin == 0) {
+      if (this.state.workTimeMinstart != 0 || this.state.workTimeSecstart != 0) {
+        this.setState(prevState => (
+          {
+            workTimeMin: prevState.workTimeMinstart,
+            workTimeSec: prevState.workTimeSecstart
+          }
+        ))
+        return (
+          this.decrementWorkCount
+        )
+      }
+    }
+    else {
+      return (
+          this.setState(function(prevState) {
+            return {
+              breakTimeSec: prevState.breakTimeSec - 1
+            }
+          })
+          )
+    } 
   }
   
   componentWillUnmount() {
     clearInterval(this.timer)
   }
   
-  incrementCount = () => (
-    this.setState(function(prevState) {
-      return {
-        countdown: prevState.countdown + 1
-      }
-    })
-    )
-    
+  funcStartOrPause = () => {
+    if(this.state.SP == 'Start') {
+      this.timer = setInterval(this.decrementWorkCount, 1000)
+      this.setState ( prevState => ({ SP: 'Pause' }))
+    }
+    else{
+      clearInterval(this.timer)
+      this.setState ( prevState => ({ SP: 'Start' }))
+    }
+  }
+  
     render() {
       return (      
-        <View style={styles.container}>
-          <View style={styles.header}>
+        <View style={styles.container} >
+          <View style={styles.header} >
             <Text style={styles.title}>My Pomodoro Timer</Text>
 
-            <WorkTimer style={styles.WorkTimer} min={workTimeMin} sec={workTimeSec}/>
+            {/* <WorkTimer style={styles.WorkTimer} min={this.state.workTimeMin} sec={this.state.workTimeSec}/> */}
 
-            <Text style={styles.countdown}> {this.state.countdown} </Text>
+            <Text style={styles.workCountdown}> {this.state.workTimeMin} : {this.state.workTimeSec} </Text>
           </View>
+
           <View style={styles.buttonContainer}>
-            <Text style={[styles.buttons, styles.button1]}>{this.state.SP}</Text>
+            <Text style={[styles.buttons, styles.button1]} onPress={this.funcStartOrPause}>{this.state.SP}</Text>
             <Text style={[styles.buttons, styles.button2]}>Reset</Text>
           </View>
+
           <View style={styles.unitContainer}>
             <Text style={[styles.units, styles.min]}> min: </Text>
             <Text style={[styles.units, styles.sec]}> sec: </Text>
           </View>
-          <WorkTiming workTimeMin={this.state.workTimeMin} workTimeSec={this.state.workTimeSec}/>
-          <BreakTiming breakTimeMin={this.state.breakTimeMin} breakTimeSec={this.state.breakTimeSec}/>
 
-          <BreakTimer style={styles.BreakTimer} min={breakTimeMin} sec={breakTimeSec}/>
+          <View style={styles.timing} pointerEvents='box-none'>
+            <Text style={styles.titles}>Work Time: </Text>
+            <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workTimeMinstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeMinstart}</TextInput>
+            <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workTimeSecstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeSecstart}</TextInput>   
+          </View>
+
+          <View style={styles.timing} pointerEvents='box-none'>
+            <Text style={styles.titles}>Break Time: </Text>
+            <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakTimeMinstart:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakTimeMinstart}</TextInput>
+            <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakTimeSecstart:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakTimeSecstart}</TextInput> 
+          </View>
+
+          {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakTimeMin} sec={this.state.breakTimeSec}/> */}
+          <Text style={styles.breakCountdown}> {this.state.breakTimeMin} : {this.state.breakTimeSec} </Text>
+
         </View>
     );
   }
@@ -141,9 +173,13 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     fontSize:30,
   },
-  countdown: {
+  workCountdown: {
     padding:20,
     fontSize:30,
+  },
+  breakCountdown: {
+    padding:20,
+    fontSize:20,
   },
   buttonContainer: {
     flexDirection: 'row',
