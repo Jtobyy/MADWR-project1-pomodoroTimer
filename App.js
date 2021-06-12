@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Vibration} from 'react-native';
 
   
 export default class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      workMin: 25,
+      workMin: 0,
       workSec: 0,
       breakMin: 5,
       breakSec: 0,
@@ -26,22 +26,66 @@ export default class App extends React.Component {
       this.workCount()
   }
 
+  timer1
+  timer2
+  timer = [this.timer1, this.timer2]
+
   workCount = () => {
     if(this.state.offSwitch == 'start')
     {
-      clearInterval(timer)
+      this.timer.forEach(element => {
+        clearInterval(element)
+      });
     }
     else {
-      timer = setInterval(() => this.countdown(), 1000)
+      this.timer[0] = setInterval(() => this.countdown(), 1000)
     }
   }
-  countdown = () => (
-    this.setState((prevState) => ({workMin: prevState.workMin - 1}))
-    )
+
+  countdown = () =>  {
+    if (this.state.workMin > 0 && this.state.workSec == 0){
+      this.setState((prevState) => ({workMin: prevState.workMin - 1, workSec: 60}))
+    }
+    else if (this.state.workMin == 0 && this.state.workSec == 0){
+      Vibration.vibrate(1 * 1000)
+      this.setState(() => ({breakMin: 5, breakSec: 0}))
+      this.timer.forEach(element => {
+        clearInterval(element)
+      });
+      this.timer[1] = setInterval(() => this.breakcountdown(), 1000)
+    }
+    else {
+      this.setState((prevState) => ({workSec: prevState.workSec - 1}))
+    }
+  }
+
+  breakcountdown = () => {
+    if (this.state.breakMin > 0 && this.state.breakSec == 0){
+      this.setState((prevState) => ({breakMin: prevState.breakMin - 1, breakSec: 60}))
+    }
+    else if (this.state.breakMin == 0 && this.state.breakSec == 0){
+      Vibration.vibrate(1 * 1000)
+      this.setState(() => ({workMin: 25, workkSec: 0}))
+      this.timer.forEach(element => {
+        clearInterval(element)
+      });
+      this.timer[0] = setInterval(() => this.countdown(), 1000)
+    }
+    else {
+      this.setState((prevState) => ({breakSec: prevState.breakSec - 1}))
+    }
+  }
     
   reset = () => (    
-    this.setState(() => ({workMin: 25}))
+    this.setState(() => ({workMin: 25, workSec: 0, breakMin:5, breakSec:5}))
   )
+
+  resetbreak = () => (
+    this.setState(() => ({breakMin: 5, breakSec:5}))
+  )
+  componentWillUnmount() {
+    clearInterval(this.timer[0])
+  }
 
   render() {
     return (      
@@ -81,6 +125,9 @@ export default class App extends React.Component {
         {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakMin} sec={this.state.breakSec}/> */}
         <Text style={styles.breakCountdown}> {this.state.breakMin} : {this.state.breakSec} </Text>
 
+        <TouchableOpacity style={styles.brkrstbttn} onPress={() => this.resetbreak()}>
+           <Text> reset break time </Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -133,7 +180,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between', 
-
+    margin: 20,
   },
   buttons: {
     width:100,
@@ -148,6 +195,11 @@ const styles = StyleSheet.create({
     marginTop:4,
     fontSize: 30,
     fontWeight: 'normal',
+  },
+  brkrstbttn: {
+    backgroundColor: 'red',
+    borderRadius: 3,
+    marginTop:20,
   },
   unitContainer: {
     flexDirection:'row',
