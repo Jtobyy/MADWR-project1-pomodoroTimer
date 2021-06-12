@@ -1,138 +1,87 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity, } from 'react-native';
 
   
 export default class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      workTimeMinstart: 25,
-      workTimeSecstart: 0,
-      breakTimeMinstart: 5,
-      breakTimeSecstart: 0,
-      workTimeMin: 25,
-      workTimeSec: 0,
-      breakTimeMin: 5,
-      breakTimeSec: 0,
-      SP: 'Start',
-      status: 'Work'
+      workMin: 25,
+      workSec: 0,
+      breakMin: 5,
+      breakSec: 0,
+      offSwitch: 'stop',
+      onSwitch: 'start'
     }
   }
   
-  decrementWorkCount = () => { 
-    if(this.state.workTimeSec == 0 && this.state.workTiimeMin != 0) {
-      return (
-        this.setState(function(prevState) {
-          return {
-            workTimeMin: prevState.workTimeMin - 1,
-            workTimeSec: 60,
-          }
-        })
-      )
-    }
-    else if(this.state.workTimeSec == 0 && this.state.workTimeMin == 0) {
-      return (
-        this.decrementBreakCount
-      )
+  componentDidMount() {
+    console.log('mounted')
+  }
+
+  startOrpause = () => { 
+      // Takes in the 2 values of offSwitch and onSwitch and interchange their values
+      this.setState(prevState => ({onSwitch: prevState.offSwitch, offSwitch: prevState.onSwitch}))
+
+      this.workCount()
+  }
+
+  workCount = () => {
+    if(this.state.offSwitch == 'start')
+    {
+      clearInterval(timer)
     }
     else {
-      return (
-          this.setState(function(prevState) {
-            return {
-              workTimeSec: prevState.workTimeSec - 1
-            }
-          })
-          )
-    } 
-  }
-
-  decrementBreakCount = () => {
-    if(this.state.breakTimeSec == 0 && this.state.breakTiimeMin != 0) {
-      return (
-        this.setState(function(prevState) {
-          return {
-            breakTimeMin: prevState.breakTimeMin - 1,
-            breakTimeSec: 60,
-          }
-        })
-      )
-    }
-    else if(this.state.breakTimeSec == 0 && this.state.breakTimeMin == 0) {
-      if (this.state.workTimeMinstart != 0 || this.state.workTimeSecstart != 0) {
-        this.setState(prevState => (
-          {
-            workTimeMin: prevState.workTimeMinstart,
-            workTimeSec: prevState.workTimeSecstart
-          }
-        ))
-        return (
-          this.decrementWorkCount
-        )
-      }
-    }
-    else {
-      return (
-          this.setState(function(prevState) {
-            return {
-              breakTimeSec: prevState.breakTimeSec - 1
-            }
-          })
-          )
-    } 
-  }
-  
-  componentWillUnmount() {
-    clearInterval(this.timer)
-  }
-  
-  funcStartOrPause = () => {
-    if(this.state.SP == 'Start') {
-      this.timer = setInterval(this.decrementWorkCount, 1000)
-      this.setState ( prevState => ({ SP: 'Pause' }))
-    }
-    else{
-      clearInterval(this.timer)
-      this.setState ( prevState => ({ SP: 'Start' }))
+      timer = setInterval(() => this.countdown(), 1000)
     }
   }
-  
-    render() {
-      return (      
-        <View style={styles.container} >
-          <View style={styles.header} >
-            <Text style={styles.title}>My Pomodoro Timer</Text>
+  countdown = () => (
+    this.setState((prevState) => ({workMin: prevState.workMin - 1}))
+    )
+    
+  reset = () => (    
+    this.setState(() => ({workMin: 25}))
+  )
 
-            {/* <WorkTimer style={styles.WorkTimer} min={this.state.workTimeMin} sec={this.state.workTimeSec}/> */}
-
-            <Text style={styles.workCountdown}> {this.state.workTimeMin} : {this.state.workTimeSec} </Text>
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <Text style={[styles.buttons, styles.button1]} onPress={this.funcStartOrPause}>{this.state.SP}</Text>
-            <Text style={[styles.buttons, styles.button2]}>Reset</Text>
-          </View>
-
-          <View style={styles.unitContainer}>
-            <Text style={[styles.units, styles.min]}> min: </Text>
-            <Text style={[styles.units, styles.sec]}> sec: </Text>
-          </View>
-
-          <View style={styles.timing} pointerEvents='box-none'>
-            <Text style={styles.titles}>Work Time: </Text>
-            <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workTimeMinstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeMinstart}</TextInput>
-            <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workTimeSecstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeSecstart}</TextInput>   
-          </View>
-
-          <View style={styles.timing} pointerEvents='box-none'>
-            <Text style={styles.titles}>Break Time: </Text>
-            <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakTimeMinstart:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakTimeMinstart}</TextInput>
-            <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakTimeSecstart:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakTimeSecstart}</TextInput> 
-          </View>
-
-          {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakTimeMin} sec={this.state.breakTimeSec}/> */}
-          <Text style={styles.breakCountdown}> {this.state.breakTimeMin} : {this.state.breakTimeSec} </Text>
-
+  render() {
+    return (      
+      <View style={styles.container} >
+        <View style={styles.header} >
+          <Text style={styles.title}>Pomodoro Timer</Text>
+          <Text style={styles.workCountdown}> {this.state.workMin} : {this.state.workSec} </Text>
         </View>
+
+        <View style={styles.buttonContainer}>
+          
+          <TouchableOpacity style={styles.buttons} onPress={() => this.startOrpause()}> 
+            <Text style={styles.buttonText}>{this.state.onSwitch}</Text> 
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttons} onPress={() => this.reset()}> 
+            <Text style={styles.buttonText}>reset</Text> 
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.unitContainer}>
+          <Text style={[styles.units, styles.min]}> min: </Text>
+          <Text style={[styles.units, styles.sec]}> sec: </Text>
+        </View>
+
+        <View style={styles.timing} pointerEvents='box-none'>
+          <Text style={styles.titles}>Work Time: </Text>
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workTimeMinstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeMinstart}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workTimeSecstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeSecstart}</TextInput>   
+        </View>
+
+        <View style={styles.timing} pointerEvents='box-none'>
+          <Text style={styles.titles}>Break Time: </Text>
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakTimeMinstart:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakTimeMinstart}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakTimeSecstart:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakTimeSecstart}</TextInput> 
+        </View>
+
+        {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakMin} sec={this.state.breakSec}/> */}
+        <Text style={styles.breakCountdown}> {this.state.breakMin} : {this.state.breakSec} </Text>
+
+      </View>
     );
   }
 }
@@ -183,21 +132,22 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between', 
+
   },
   buttons: {
-    padding:10,
-    fontSize:30,
-    backgroundColor:'skyblue',
-    borderWidth:1,
+    width:100,
+    backgroundColor:'#2196F3',
+    height:50,
     borderRadius:3,
-    marginBottom:30,
-    marginTop:10,
+    borderColor:'black',
+    borderWidth:1,
   },
-  button1: {
-    marginRight:20,
-  },
-  button2: {
-    marginLeft:20,
+  buttonText: {
+    alignSelf:'center',
+    marginTop:4,
+    fontSize: 30,
+    fontWeight: 'normal',
   },
   unitContainer: {
     flexDirection:'row',
