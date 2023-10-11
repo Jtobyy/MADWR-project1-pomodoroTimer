@@ -112,14 +112,14 @@ export default class App extends React.Component {
 
         <View style={styles.timing} pointerEvents='box-none'>
           <Text style={styles.titles}>Work Time: </Text>
-          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workTimeMinstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeMinstart}</TextInput>
-          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workTimeSecstart:text }))} maxLength={2} keyboardType="numeric" >{this.state.workTimeSecstart}</TextInput>   
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workMin:text }))} maxLength={2} keyboardType="numeric" >{this.state.workMin}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workSec:text }))} maxLength={2} keyboardType="numeric" >{this.state.workSec}</TextInput>   
         </View>
 
         <View style={styles.timing} pointerEvents='box-none'>
           <Text style={styles.titles}>Break Time: </Text>
-          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakTimeMinstart:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakTimeMinstart}</TextInput>
-          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakTimeSecstart:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakTimeSecstart}</TextInput> 
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakMin:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakMin}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakSec:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakSec}</TextInput> 
         </View>
 
         {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakMin} sec={this.state.breakSec}/> */}
@@ -133,6 +133,8 @@ export default class App extends React.Component {
   }
 }
 
+
+// Styles
 const styles = StyleSheet.create({
   timing: {
     flexDirection:'row',
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    fontFamily:'cursive',
+    // fontFamily:'cursive',
     padding: 20,
     backgroundColor: '#fff',
     alignItems: 'center',
@@ -222,3 +224,23 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
   },
 });
+// import { StatusBar } from 'expo-status-bar';
+// import { StyleSheet, Text, View } from 'react-native';
+
+// export default function App() {
+//   return (
+//     <View style={styles.container}>
+//       <Text>Open up App.js to start working on your app!</Text>
+//       <StatusBar style="auto" />
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   },
+// });
