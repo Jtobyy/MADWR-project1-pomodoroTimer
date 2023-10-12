@@ -6,7 +6,11 @@ export default class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      workMin: 0,
+      prevWorkMin: 25,
+      prevWorkSec: 0,
+      prevBreakMin: 5,
+      prevBreakSec: 0,
+      workMin: 25,
       workSec: 0,
       breakMin: 5,
       breakSec: 0,
@@ -33,6 +37,9 @@ export default class App extends React.Component {
   workCount = () => {
     if(this.state.offSwitch == 'start')
     {
+      if (this.state.workMin == 0 && this.state.workSec == 0)
+        this.setState({workMin: this.state.prevWorkMin, workSec: this.state.prevWorkSec})
+
       this.timer.forEach(element => {
         clearInterval(element)
       });
@@ -48,7 +55,7 @@ export default class App extends React.Component {
     }
     else if (this.state.workMin == 0 && this.state.workSec == 0){
       Vibration.vibrate(1 * 1000)
-      this.setState(() => ({breakMin: 5, breakSec: 0}))
+      this.setState(() => ({breakMin: this.state.breakMin, breakSec: this.state.breakSec}))
       this.timer.forEach(element => {
         clearInterval(element)
       });
@@ -65,7 +72,7 @@ export default class App extends React.Component {
     }
     else if (this.state.breakMin == 0 && this.state.breakSec == 0){
       Vibration.vibrate(1 * 1000)
-      this.setState(() => ({workMin: 25, workkSec: 0}))
+      this.setState(() => ({workMin: 25, workSec: 0}))
       this.timer.forEach(element => {
         clearInterval(element)
       });
@@ -77,11 +84,12 @@ export default class App extends React.Component {
   }
     
   reset = () => (    
-    this.setState(() => ({workMin: 25, workSec: 0, breakMin:5, breakSec:5}))
+    this.setState(() => ({workMin: this.state.prevWorkMin, workSec: this.state.prevWorkSec, 
+      breakMin: this.state.prevBreakMin, breakSec: this.state.prevBreakSec}))
   )
 
   resetbreak = () => (
-    this.setState(() => ({breakMin: 5, breakSec:5}))
+    this.setState(() => ({breakMin: this.state.prevBreakMin, breakSec:this.state.prevBreakSec}))
   )
   componentWillUnmount() {
     clearInterval(this.timer[0])
@@ -112,14 +120,14 @@ export default class App extends React.Component {
 
         <View style={styles.timing} pointerEvents='box-none'>
           <Text style={styles.titles}>Work Time: </Text>
-          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({workMin:text }))} maxLength={2} keyboardType="numeric" >{this.state.workMin}</TextInput>
-          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({workSec:text }))} maxLength={2} keyboardType="numeric" >{this.state.workSec}</TextInput>   
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({prevWorkMin:text, workMin: text }))} maxLength={2} keyboardType="numeric" >{this.state.prevWorkMin}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({prevWorkSec:text, workSec: text }))} maxLength={2} keyboardType="numeric" >{this.state.prevWorkSec}</TextInput>   
         </View>
 
         <View style={styles.timing} pointerEvents='box-none'>
           <Text style={styles.titles}>Break Time: </Text>
-          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({breakMin:text }))}  maxLength={2} keyboardType="numeric" >{this.state.breakMin}</TextInput>
-          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({breakSec:text }))}  maxLength={2} keyboardType="numeric">{this.state.breakSec}</TextInput> 
+          <TextInput style={[styles.inputs, styles.input1]} onChangeText={(text) => (this.setState({prevBreakMin:text, breakMin: text }))}  maxLength={2} keyboardType="numeric" >{this.state.prevBreakMin}</TextInput>
+          <TextInput style={[styles.inputs, styles.input2]} onChangeText={(text) => (this.setState({prevBreakSec:text, breakSec: text }))}  maxLength={2} keyboardType="numeric">{this.state.prevBreakSec}</TextInput> 
         </View>
 
         {/* <BreakTimer style={styles.BreakTimer} min={this.state.breakMin} sec={this.state.breakSec}/> */}
